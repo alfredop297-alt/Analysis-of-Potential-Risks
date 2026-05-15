@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análisis de Riesgos Potenciales en Maquinaria y Equipos</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+    <style>
+        .step-content { display: none; }
+        .step-content.active { display: block; }
+        input[type="radio"]:checked + label { background-color: #3b82f6; color: white; border-color: #3b82f6; }
+        .photo-preview { max-width: 100%; height: auto; border-radius: 8px; margin-top: 10px; border: 1px solid #ddd; }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen font-sans pb-20">
+
+    <!-- Header -->
+    <header class="bg-blue-700 text-white p-4 sticky top-0 z-50 shadow-md">
+        <h1 class="text-xl font-bold text-center">Análisis de Riesgos Potenciales en Maquinaria y equipos KCM</h1>
+        <div id="progress-bar" class="w-full bg-blue-900 h-1 mt-3 rounded-full overflow-hidden">
+            <div id="progress-inner" class="bg-blue-300 h-full transition-all duration-300" style="width: 10%;"></div>
+        </div>
+    </header>
+
+    <main class="max-w-md mx-auto p-4" id="app-container">
+        
+        <!-- Sección (process allocation) 0: DATOS GENERALES -->
+        <section id="step-0" class="step-content active bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+            <h2 class="text-lg font-bold mb-4 text-blue-800 border-b pb-2">Datos Generales</h2>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Responsable del Análisis</label>
+                    <input type="text" id="responsable" class="w-full mt-1 p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Planta</label>
+                    <select id="planta" class="w-full mt-1 p-3 border rounded-lg focus:ring-2 focus:ring-blue-500">
+                        <option>BAJÍO</option><option>ECATEPEC</option><option>MORELIA</option>
+                        <option>ORIZABA</option><option>RAMOS ARIZPE</option><option>TEXMELUCAN</option>
+                        <option>CUAUTITLÁN</option><option>EVENFLO</option><option>TLAXCALA</option>
+                        <option>CDM</option><option>CEDIS TEPOTZOTLÁN</option><option>CEDIS MONTERREY</option>
+                        <option>CEDIS GUADALAJARA</option><option>CEDIS CULIACÁN</option><option>SODISA</option>
+                        <option>OFICINAS BALMES</option><option>PROYECTOS MAYORES TISSUE</option><option>PROYECTOS MAYORES PERSONAL CARE</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Nombre de la Máquina</label>
+                    <input type="text" id="maquina_nombre" class="w-full mt-1 p-3 border rounded-lg focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">ID de la Máquina</label>
+                    <input type="text" id="maquina_id" class="w-full mt-1 p-3 border rounded-lg focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Sección (process allocation)</label>
+                    <input type="text" id="seccion" class="w-full mt-1 p-3 border rounded-lg focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Condición de la Máquina</label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <input type="radio" name="condicion" id="cond-nueva" value="Nueva" class="hidden sr-only" checked>
+                        <label for="cond-nueva" class="block text-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 border-gray-300">Nueva</label>
+                        <input type="radio" name="condicion" id="cond-existente" value="Ya existente" class="hidden sr-only">
+                        <label for="cond-existente" class="block text-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 border-gray-300">Ya existente</label>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección (process allocation) NUEVA: PREVIO A OPERACIÓN (Fase de Diseño) - Solo si es Nueva -->
+        <section id="step-preop" class="step-content bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+            <h2 class="text-lg font-bold mb-4 text-blue-800 border-b pb-2">Previo a Operación (Diseño)</h2>
+            <p class="text-xs text-gray-500 mb-4 font-italic">Fase de Diseño y Antes de la puesta en marcha</p>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Consideraciones de Peligro</label>
+                    <textarea id="preop_peligro" class="w-full mt-1 p-3 border rounded-lg" rows="2" placeholder="Ej. Acceso a zona de cuchillas..."></textarea>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Definición del Escenario de Riesgo</label>
+                    <textarea id="preop_escenario" class="w-full mt-1 p-3 border rounded-lg" rows="2" placeholder="Ej. Atrapamiento durante ajuste manual..."></textarea>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Acciones de Control</label>
+                    <textarea id="preop_acciones" class="w-full mt-1 p-3 border rounded-lg" rows="2" placeholder="Ej. Guardas fijas con interlock..."></textarea>
+                </div>
+                <div class="pt-2">
+                    <button onclick="guardarPreOp()" class="w-full bg-blue-100 text-blue-700 p-2 rounded-lg text-sm font-bold border border-blue-200">
+                        + Añadir otro peligro de diseño
+                    </button>
+                    <div id="preop_count" class="text-center text-xs mt-2 text-gray-400">0 peligros guardados en esta fase</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PASO 1: DEFINICIÓN ESCENARIO -->
+        <section id="step-1" class="step-content bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+            <h2 class="text-lg font-bold mb-4 text-blue-800 border-b pb-2">Paso 1- Identificación de Peligros sin protecciones</h2>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Categoría de Peligro</label>
+                    <select id="categoria_peligro" class="w-full mt-1 p-3 border rounded-lg">
+                        <option>Puntos de Atrapamiento/Nips</option>
+                        <option>Superficies Calientes/Frías</option>
+                        <option>Superficies Filosas y Cuchillas</option>
+                        <option>Espacios Limitados / Reducidos</option>
+                        <option>Ruido & Vibraciones</option>
+                        <option>Aislamiento y Disipación de Energía</option>
+                        <option>Peligros Eléctricos</option>
+                        <option>Paros y restablecimiento</option>
+                        <option>Radiación</option>
+                        <option>Químicos</option>
+                        <option>Electricidad estática</option>
+                        <option>Cargas suspendidas</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Definición del Riesgo</label>
+                    <textarea id="escenario_desc" class="w-full mt-1 p-3 border rounded-lg" rows="3" placeholder="Describe el riesgo intrínseco sin guardas..."></textarea>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 font-bold">Severidad (S)</label>
+                    <select id="severidad" class="w-full mt-1 p-3 border rounded-lg bg-blue-50">
+                        <option value="15">Fatalidad (15)</option>
+                        <option value="10">Mayor Irreversible severo (10)</option>
+                        <option value="6">Mayor Irreversible (6)</option>
+                        <option value="4">Menor Irreversible (4)</option>
+                        <option value="2">Mayor Reversible (2)</option>
+                        <option value="0.5">Menor Reversible (0.5)</option>
+                        <option value="0.1">Bajo (0.1)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 font-bold">Probabilidad (P)</label>
+                    <select id="probabilidad" class="w-full mt-1 p-3 border rounded-lg bg-blue-50">
+                        <option value="15">100% Posibilidad de Lesión (15)</option>
+                        <option value="8">60% Posibilidad de Lesión (8)</option>
+                        <option value="2">25% Posibilidad de Lesión (2)</option>
+                        <option value="0.033">Casi imposible (0.033)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 font-bold">Frecuencia (F)</label>
+                    <select id="frecuencia" class="w-full mt-1 p-3 border rounded-lg bg-blue-50">
+                        <option value="0.5">0.5 Anual</option>
+                        <option value="1">1 Mensual</option>
+                        <option value="1.5">1.5 Semanal</option>
+                        <option value="2.5">2.5 Diario</option>
+                        <option value="4">4 Cada hora</option>
+                        <option value="5">5 Constantemente</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 font-bold">Personas Expuestas (N)</label>
+                    <select id="personas_expuestas" class="w-full mt-1 p-3 border rounded-lg bg-blue-50">
+                        <option value="2">1 a 2 Personas</option>
+                        <option value="7">3 a 7 Personas</option>
+                    </select>
+                </div>
+            </div>
+        </section>
+
+        <!-- PASO 2: PROTECCIÓN ACTUAL -->
+        <section id="step-2" class="step-content bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+            <h2 class="text-lg font-bold mb-4 text-blue-800 border-b pb-2">Paso 2: Evaluación de Protección Actual</h2>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Descripción de Guardas Instaladas</label>
+                    <textarea id="guardas_desc" class="w-full mt-1 p-3 border rounded-lg" rows="3"></textarea>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2 font-bold text-red-600">Escenario actual (Regla de Oro):</label>
+                    <div class="space-y-2">
+                        <div class="flex items-start p-3 border rounded-lg bg-red-50 cursor-pointer">
+                            <input type="radio" name="regla_oro" value="sin_guardas" id="r1" class="mt-1" checked onchange="toggleRecalculo()">
+                            <label for="r1" class="ml-2 text-xs font-semibold">No hay guardas instaladas</label>
+                        </div>
+                        <div class="flex items-start p-3 border rounded-lg bg-yellow-50 cursor-pointer">
+                            <input type="radio" name="regla_oro" value="no_cumple_kc" id="r2" class="mt-1" onchange="toggleRecalculo()">
+                            <label for="r2" class="ml-2 text-xs font-semibold">Las guardas están en su lugar pero no cumplen con los estándares de K-C</label>
+                        </div>
+                        <div class="flex items-start p-3 border rounded-lg bg-green-50 cursor-pointer">
+                            <input type="radio" name="regla_oro" value="cumple_kc" id="r3" class="mt-1" onchange="toggleRecalculo()">
+                            <label for="r3" class="ml-2 text-xs font-semibold">Las guardas están en su lugar y cumplen con los estándares de K-C</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="div-recalculo" class="hidden bg-gray-50 p-4 border rounded-lg border-yellow-400">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Nueva Probabilidad (Recalcule Probabilidad):</label>
+                    <select id="probabilidad_paso2" class="w-full p-3 border rounded-lg text-sm bg-white">
+                        <option value="15">100% Posibilidad de Lesión (15)</option>
+                        <option value="8">60% Posibilidad de Lesión (8)</option>
+                        <option value="2">25% Posibilidad de Lesión (2)</option>
+                        <option value="0.033">Casi imposible (0.033)</option>
+                    </select>
+                </div>
+
+                <div class="bg-gray-100 p-4 rounded-lg">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Evidencia Fotográfica</label>
+                    <input type="file" id="foto_peligro" accept="image/*" capture="environment" class="hidden">
+                    <button type="button" onclick="document.getElementById('foto_peligro').click()" class="w-full bg-blue-600 text-white p-3 rounded-lg flex items-center justify-center gap-2 font-bold shadow-sm">
+                        📸 Capturar Foto
+                    </button>
+                    <div id="preview-container"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PASO 3: SOLUCIÓN DE INGENIERÍA -->
+        <section id="step-3" class="step-content bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+            <h2 class="text-lg font-bold mb-4 text-blue-800 border-b pb-2">Paso 3: Reducción de Riesgo por 
+               Controles de Ingeniería 
+</h2>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Proyecto / Modificación de Ingeniería Requerida</label>
+                    <textarea id="solucion_ing" class="w-full mt-1 p-3 border rounded-lg" rows="4" placeholder="Especificar guardas físicas, sensores, etc."></textarea>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">¿Esta solución mitigará el peligro?</label>
+                    <select id="mitiga" class="w-full mt-1 p-3 border rounded-lg">
+                        <option>Si</option>
+                        <option>No</option>
+                    </select>
+                </div>
+            </div>
+        </section>
+
+        <!-- PASO 4: CONTROLES ADMINISTRATIVOS -->
+        <section id="step-4" class="step-content bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+            <h2 class="text-lg font-bold mb-4 text-blue-800 border-b pb-2">Paso 4: Reducción de Riesgo Residual por Controles 
+               Administrativos 
+</h2>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Entrenamiento / LOTO / EPP</label>
+                    <textarea id="medidas_admin" class="w-full mt-1 p-3 border rounded-lg" rows="3"></textarea>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Otras Medidas Complementarias</label>
+                    <textarea id="medidas_comp" class="w-full mt-1 p-3 border rounded-lg" rows="3"></textarea>
+                </div>
+
+                <div class="pt-6 border-t space-y-4">
+                    <button onclick="guardarYContinuar()" class="w-full bg-green-600 text-white p-4 rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg hover:bg-green-700 transition-colors">
+                        ➕ Guardar y Añadir otro Peligro
+                    </button>
+                    <button id="btn-descarga" onclick="finalizarYDescargar()" class="w-full bg-blue-800 text-white p-4 rounded-xl font-bold shadow-xl hover:bg-blue-900 transition-colors">
+                        📄 Finalizar y Generar PDF
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer Navegación -->
+    <nav class="fixed bottom-0 w-full bg-white border-t p-4 flex justify-between items-center z-50 shadow-lg">
+        <button id="btn-prev" onclick="changeStep(-1)" class="px-6 py-2 bg-gray-200 rounded-lg font-medium text-gray-700">Anterior</button>
+        <div class="text-gray-400 text-xs font-bold" id="step-label">Cargando...</div>
+        <button id="btn-next" onclick="changeStep(1)" class="px-6 py-2 bg-blue-600 rounded-lg font-medium text-white shadow-md">Siguiente</button>
+    </nav>
+
+    <script>
+        let currentStep = 0;
+        let flowSteps = ["step-0", "step-1", "step-2", "step-3", "step-4"];
+        let peligros = [];
+        let peligrosPreOp = []; // Almacena peligros de fase de diseño
+        let currentPhoto = null;
+
+        // Foto preview
+        document.getElementById('foto_peligro').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                    currentPhoto = ev.target.result;
+                    document.getElementById('preview-container').innerHTML = `<img src="${currentPhoto}" class="photo-preview">`;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        function toggleRecalculo() {
+            const val = document.querySelector('input[name="regla_oro"]:checked').value;
+            document.getElementById('div-recalculo').classList.toggle('hidden', val !== 'no_cumple_kc');
+        }
+
+        function updateUI() {
+            // Re-evaluar flujo según condición de máquina
+            const condicion = document.querySelector('input[name="condicion"]:checked').value;
+            if (condicion === "Nueva") {
+                flowSteps = ["step-0", "step-preop", "step-1", "step-2", "step-3", "step-4"];
+            } else {
+                flowSteps = ["step-0", "step-1", "step-2", "step-3", "step-4"];
+            }
+
+            document.querySelectorAll('.step-content').forEach(el => el.classList.remove('active'));
+            const currentElId = flowSteps[currentStep];
+            document.getElementById(currentElId).classList.add('active');
+
+            const progress = ((currentStep + 1) / flowSteps.length) * 100;
+            document.getElementById('progress-inner').style.width = `${progress}%`;
+            document.getElementById('step-label').innerText = `Paso ${currentStep + 1} de ${flowSteps.length}`;
+            document.getElementById('btn-prev').style.visibility = currentStep === 0 ? 'hidden' : 'visible';
+            document.getElementById('btn-next').innerText = currentStep === flowSteps.length - 1 ? 'Guardar' : 'Siguiente';
+            window.scrollTo(0, 0);
+        }
+
+        function changeStep(n) {
+            if (n === 1 && currentStep === flowSteps.length - 1) {
+                guardarYContinuar();
+                return;
+            }
+            if (currentStep + n >= 0 && currentStep + n < flowSteps.length) {
+                currentStep += n;
+                updateUI();
+            }
+        }
+
+        // Lógica de guardado para la nueva Sección (process allocation) de Diseño
+        function guardarPreOp() {
+            const p = {
+                peligro: document.getElementById('preop_peligro').value,
+                escenario: document.getElementById('preop_escenario').value,
+                acciones: document.getElementById('preop_acciones').value
+            };
+            if(p.peligro.trim() !== "") {
+                peligrosPreOp.push(p);
+                document.getElementById('preop_peligro').value = '';
+                document.getElementById('preop_escenario').value = '';
+                document.getElementById('preop_acciones').value = '';
+                document.getElementById('preop_count').innerText = `${peligrosPreOp.length} peligros guardados en esta fase`;
+                alert("Peligro de diseño guardado.");
+            } else {
+                alert("Ingresa al menos la consideración de peligro.");
+            }
+        }
+
+        function getValCalculados(p) {
+            const S = parseFloat(p.severidad);
+            const F = parseFloat(p.frecuencia);
+            const N = parseFloat(p.expuestos);
+            const P1 = parseFloat(p.probabilidad_p1);
+            const riesgoP1 = S * P1 * F * N;
+            let P2 = P1;
+            const regla = p.regla_oro;
+            if (regla === 'cumple_kc') P2 = 0.033;
+            else if (regla === 'no_cumple_kc') P2 = parseFloat(p.probabilidad_p2_manual);
+            const riesgoP2 = S * P2 * F * N;
+            const getTipo = (r) => r <= 5 ? "Aceptable" : (r <= 50 ? "Bajo" : (r <= 500 ? "Alto" : "Inaceptable"));
+            const claseSev = S === 15 ? "Centinela" : (S >= 4 ? "A" : (S >= 0.5 ? "B" : "C"));
+            const getSIL = (r) => {
+                if (r > 900) return { sil: "SIL 3", pl: "e" };
+                if (r >= 200) return { sil: "SIL 2", pl: "d" };
+                if (r >= 41) return { sil: "SIL 1 (High)", pl: "c" };
+                if (r >= 6) return { sil: "SIL 1 (Low)", pl: "b" };
+                return { sil: "N/A", pl: "a" };
+            };
+            const labelsReglas = { "sin_guardas": "Sin guardas", "no_cumple_kc": "No cumple KC", "cumple_kc": "Cumple KC" };
+            return { riesgoP1, tipoP1: getTipo(riesgoP1), riesgoP2, tipoP2: getTipo(riesgoP2), P2, claseSev, reglaTxt: labelsReglas[regla], seguridad: getSIL(riesgoP1) };
+        }
+
+        function guardarActual() {
+            const elP1 = document.getElementById('probabilidad');
+            const p = {
+                categoria: document.getElementById('categoria_peligro').value,
+                escenario: document.getElementById('escenario_desc').value,
+                severidad: document.getElementById('severidad').value,
+                probabilidad_p1: elP1.value,
+                probabilidad_p1_txt: elP1.options[elP1.selectedIndex].text,
+                frecuencia: document.getElementById('frecuencia').value,
+                expuestos: document.getElementById('personas_expuestas').value,
+                guardas: document.getElementById('guardas_desc').value,
+                regla_oro: document.querySelector('input[name="regla_oro"]:checked').value,
+                probabilidad_p2_manual: document.getElementById('probabilidad_paso2').value,
+                foto: currentPhoto,
+                solucion: document.getElementById('solucion_ing').value,
+                mitiga: document.getElementById('mitiga').value,
+                med_admin: document.getElementById('medidas_admin').value,
+                med_comp: document.getElementById('medidas_comp').value
+            };
+            if(p.escenario.trim() !== "") {
+                const existe = peligros.find(x => x.escenario === p.escenario && x.categoria === p.categoria);
+                if (!existe) peligros.push(p);
+            }
+        }
+
+        function resetInputs() {
+            document.getElementById('escenario_desc').value = '';
+            document.getElementById('guardas_desc').value = '';
+            document.getElementById('solucion_ing').value = '';
+            document.getElementById('medidas_admin').value = '';
+            document.getElementById('medidas_comp').value = '';
+            document.getElementById('preview-container').innerHTML = '';
+            currentPhoto = null;
+        }
+
+        function guardarYContinuar() {
+            guardarActual();
+            alert("¡Peligro guardado!");
+            resetInputs();
+            // Regresar al inicio del análisis de peligros (después de datos generales y preop)
+            const condicion = document.querySelector('input[name="condicion"]:checked').value;
+            currentStep = (condicion === "Nueva") ? 2 : 1; 
+            updateUI();
+        }
+
+        async function finalizarYDescargar() {
+            guardarActual();
+            if(peligros.length === 0 && peligrosPreOp.length === 0) return alert("Por favor, agrega datos al análisis.");
+
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF('p', 'mm', 'a4');
+            const info = {
+                titulo: "Análisis de Riesgos Potenciales en Maquinaria y equipos KCM",
+                maquina: document.getElementById('maquina_nombre').value || "N/A",
+                id: document.getElementById('maquina_id').value || "N/A",
+                planta: document.getElementById('planta').value || "N/A",
+                responsable: document.getElementById('responsable').value || "N/A",
+                seccion: document.getElementById('seccion').value || "N/A",
+                condicion: document.querySelector('input[name="condicion"]:checked')?.value || "N/A"
+            };
+
+            const header = () => {
+                doc.setFillColor(0, 51, 153);
+                doc.rect(0, 0, 210, 35, 'F');
+                doc.setTextColor(255, 255, 255);
+                doc.setFontSize(14);
+                doc.setFont(undefined, 'bold');
+                doc.text(info.titulo, 105, 12, { align: 'center' });
+                doc.setFontSize(9);
+                doc.setFont(undefined, 'normal');
+                doc.text(`Máquina: ${info.maquina} | ID: ${info.id} | Planta: ${info.planta}`, 105, 20, { align: 'center' });
+                doc.text(`Sección (process allocation): ${info.seccion} | Condición: ${info.condicion} | Responsable: ${info.responsable}`, 105, 26, { align: 'center' });
+                doc.text(`Fecha de Reporte: ${new Date().toLocaleDateString()}`, 105, 32, { align: 'center' });
+                doc.setTextColor(0, 0, 0);
+            };
+
+            header();
+            let yPos = 40;
+
+            // Tabla para Fase de Diseño (Solo si hay datos)
+            if(peligrosPreOp.length > 0) {
+                doc.autoTable({
+                    startY: yPos,
+                    theme: 'grid',
+                    headStyles: { fillColor: [0, 102, 204], textColor: [255, 255, 255] },
+                    head: [['FASE DE DISEÑO / PRE-OPERACIÓN (Previo a puesta en marcha)']],
+                    body: [['Registro de consideraciones de seguridad desde la concepción del proyecto.']]
+                });
+                yPos = doc.lastAutoTable.finalY + 5;
+
+                const bodyPreOp = peligrosPreOp.map((p, i) => [
+                    `#${i+1}`, 
+                    `Peligro: ${p.peligro}\nEscenario: ${p.escenario}\nAcciones: ${p.acciones}`
+                ]);
+
+                doc.autoTable({
+                    startY: yPos,
+                    theme: 'striped',
+                    styles: { fontSize: 8 },
+                    head: [['No.', 'Riesgos previos a operación']],
+                    body: bodyPreOp
+                });
+                yPos = doc.lastAutoTable.finalY + 10;
+            }
+
+            // Tablas de Peligros Detallados (Escenarios normales)
+            peligros.forEach((p, index) => {
+                const c = getValCalculados(p);
+                if (yPos > 240) { doc.addPage(); header(); yPos = 40; }
+
+                doc.autoTable({
+                    startY: yPos,
+                    theme: 'grid',
+                    headStyles: { fillGray: [200], textColor: [0, 0, 0], fontStyle: 'bold', fontSize: 10 },
+                    styles: { fontSize: 8, cellPadding: 2, overflow: 'linebreak' },
+                    columnStyles: { 0: { cellWidth: 40, fontStyle: 'bold' } },
+                    body: [
+                        [{ content: `Análisis de Riesgos #${index + 1}: ${p.categoria}`, colSpan: 3, styles: { fillColor: [240, 240, 240], fontSize: 10 } }],
+                        ['Definición del Riesgo', { content: p.escenario, colSpan: 1 }, { content: 'Evidencia Fotográfica', rowSpan: 5, styles: { halign: 'center', valign: 'middle' } }],
+                        ['Severidad (S)', `${p.severidad} (${c.claseSev})`, ''],
+                        ['Paso 1 (Sin Guardas)', `Riesgo: ${c.riesgoP1.toFixed(2)} - ${c.tipoP1}`, ''],
+                        ['Paso 2 (Actual)', `Riesgo: ${c.riesgoP2.toFixed(2)} - ${c.tipoP2} (${c.reglaTxt})`, ''],
+                        ['Requerimiento SIL/PL', `${c.seguridad.sil} / PL: ${c.seguridad.pl}`, ''],
+                        ['Solución Ingeniería', { content: p.solucion || "N/A", colSpan: 2 }],
+                        ['Controles Admin.', { content: `EPP/LOTO: ${p.med_admin}\nComp: ${p.med_comp}`, colSpan: 2 }]
+                    ],
+                    didDrawCell: (data) => {
+                        if (data.column.index === 2 && data.row.index === 1 && p.foto) {
+                            const padding = 2;
+                            try { doc.addImage(p.foto, 'JPEG', data.cell.x + padding, data.cell.y + padding, data.cell.width - (padding * 2), data.cell.height - (padding * 2)); } catch (e) {}
+                        }
+                    }
+                });
+                yPos = doc.lastAutoTable.finalY + 10;
+            });
+
+            doc.save(`Reporte_Riesgos_KCM_${info.id}.pdf`);
+        }
+
+        // Al cambiar la condición de máquina, actualizamos UI
+        document.querySelectorAll('input[name="condicion"]').forEach(radio => {
+            radio.addEventListener('change', updateUI);
+        });
+
+        updateUI();
+    </script>
+</body>
+</html>
